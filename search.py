@@ -76,19 +76,6 @@ def tinyMazeSearch(problem):
 
 
 def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    """
     visited = set()
     stack = util.Stack()
     stack.push((problem.getStartState(), []))
@@ -96,6 +83,7 @@ def depthFirstSearch(problem):
 
     while not stack.isEmpty():
         state, actions = stack.pop()
+
         if problem.isGoalState(state):
             paths.append(actions)
 
@@ -104,26 +92,60 @@ def depthFirstSearch(problem):
             successors = problem.getSuccessors(state)
             for next_state, action, _ in successors:
                 stack.push((next_state, actions + [action]))
-    # Print the number of paths found
+
     print("Number of paths found:", len(paths))
 
-    # Return the first found path
     if paths:
         return paths[0]
     else:
-        return []  # If no solution is found, return an empty list of actions
+        return []
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    queue = util.Queue()
+    queue.push((problem.getStartState(), []))
+    visited = set()
+
+    while not queue.isEmpty():
+        state, actions = queue.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            successors = problem.getSuccessors(state)
+            for next_state, action, _ in successors:
+                queue.push((next_state, actions + [action]))
+
+    return []
 
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    frontier = util.PriorityQueue()
+    frontier.push((problem.getStartState(), [], 0), 0)
+
+    visited = set()
+
+    while not frontier.isEmpty():
+        state, actions, cost = frontier.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            successors = problem.getSuccessors(state)
+            for next_state, action, step_cost in successors:
+
+                total_cost = cost + step_cost
+                frontier.push((next_state, actions + [action], total_cost), total_cost)
+
+    return []
 
 
 def nullHeuristic(state, problem=None):
